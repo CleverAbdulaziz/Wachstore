@@ -1,4 +1,4 @@
-name: Build and deploy WAR app to Azure Web App - main
+name: Build and deploy JAR app to Azure Web App - main
 
 on:
   push:
@@ -28,11 +28,12 @@ jobs:
       - name: List build artifacts
         run: ls -l target/
 
-      - name: Upload WAR artifact
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/*.war
+          path: target/*.jar
+          if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,7 +43,7 @@ jobs:
       contents: read
 
     steps:
-      - name: Download WAR artifact
+      - name: Download JAR artifact
         uses: actions/download-artifact@v4
         with:
           name: java-app
@@ -54,17 +55,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_CF0806A8C0564561995FEF76BDFCC5BD }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FF3527CC09444453A56BBB68658636CF }}
 
-      - - name: Upload JAR artifact
-  uses: actions/upload-artifact@v4
-  with:
-    name: java-app
-    path: target/*.jar
-
-- name: Deploy to Azure Web App
-  uses: azure/webapps-deploy@v3
-  with:
-    app-name: 'main'
-    slot-name: 'production'
-    package: '*.jar'
-
-
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'main'
+          slot-name: 'production'
+          package: '*.jar'
