@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: wristwatch_postgres
+    environment:
+      POSTGRES_DB: wristwatch_shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
+    networks:
+      - wristwatch_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: wristwatch_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@wristwatch.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - wristwatch_network
+
+  app:
+    build: .
+    container_name: wristwatch_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/wristwatch_shop
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      ADMIN_BOT_TOKEN: ${ADMIN_BOT_TOKEN}
+      ADMIN_BOT_USERNAME: ${ADMIN_BOT_USERNAME}
+      USER_BOT_TOKEN: ${USER_BOT_TOKEN}
+      USER_BOT_USERNAME: ${USER_BOT_USERNAME}
+      ADMIN_TELEGRAM_IDS: ${ADMIN_TELEGRAM_IDS}
+      MERCHANT_NAME: ${MERCHANT_NAME:-Wristwatch Shop}
+      MERCHANT_ACCOUNT: ${MERCHANT_ACCOUNT:-+998901234567}
+      FILE_UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    volumes:
+      - ./uploads:/app/uploads
+    networks:
+      - wristwatch_network
+
+volumes:
+  postgres_data:
+
+networks:
+  wristwatch_network:
+    driver: bridge
