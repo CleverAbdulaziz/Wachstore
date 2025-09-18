@@ -1,4 +1,4 @@
-name: Build and deploy Spring Boot app to Azure Web App
+name: Build and deploy Java app to Azure Web App
 
 on:
   push:
@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,26 +20,26 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests
+        run: mvn clean install
 
       - name: List build artifacts
         run: ls -l target/
 
-      - name: Upload JAR artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/*.jar
+          path: target/*.war
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write   # required for OIDC login
+      id-token: write   # required for OIDC
       contents: read
 
     steps:
-      - name: Download JAR artifact
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: java-app
@@ -50,15 +47,13 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
-
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'main'          # 👈 Your App Service name
+          app-name: 'main'     # 👈 Your App Service name
           slot-name: 'production'
-          package: '*.jar'
-
+          package: '*.war'     # or '*.jar' if you build a JAR
