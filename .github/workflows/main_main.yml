@@ -58,7 +58,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F1D00E1A183C4132BFBC6853AA45B12B }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_CF0806A8C0564561995FEF76BDFCC5BD }}
-          subscription-id: ${{ secrets.5ebb78c0-a3c8-4389-9bdf-1e9c2b546a7f}}
+          subscription-id: ${{ secrets.5ebb78c0-a3c8-4389-9bdf-1e9c2b546a7f }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -66,6 +66,7 @@ jobs:
           app-name: 'main'   # <-- Replace with exact App Service name from Azure Portal
           slot-name: 'production'
           package: ${{ env.JAR_FILE }}
+
 
 
 
