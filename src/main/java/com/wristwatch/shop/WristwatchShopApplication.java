@@ -8,6 +8,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @EnableJpaAuditing
 public class WristwatchShopApplication {
     public static void main(String[] args) {
-        SpringApplication.run(WristwatchShopApplication.class, args);
-    }
+        try {
+            System.out.println("=== Bot is starting (before Spring) ===");
+            SpringApplication.run(WristwatchShopApplication.class, args);
+            System.out.println("=== Bot started successfully (after Spring) ===");
+        } catch (Exception e) {
+            e.printStackTrace(); // ensures you see crash in Log Stream
+        }    }
 }
