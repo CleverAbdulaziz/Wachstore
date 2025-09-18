@@ -23,7 +23,7 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean package -DskipTests
 
       - name: List build artifacts
         run: ls -l target/
@@ -47,6 +47,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: java-app
+          path: target
+
+      - name: Find JAR file
+        id: findjar
+        run: echo "JAR_FILE=$(ls target/*.jar | head -n 1)" >> $GITHUB_ENV
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -58,6 +63,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'main'
+          app-name: 'main-dffeasceach3a4a9' # must match App Service name in Azure Portal
           slot-name: 'production'
-          package: '*.jar'
+          package: ${{ env.JAR_FILE }}
