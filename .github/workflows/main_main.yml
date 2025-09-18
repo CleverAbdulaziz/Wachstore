@@ -63,6 +63,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'main-dffeasceach3a4a9' # must match App Service name in Azure Portal
+          app-name: 'YOUR-APP-SERVICE-NAME'   # <-- Replace with exact App Service name from Azure Portal
           slot-name: 'production'
           package: ${{ env.JAR_FILE }}
