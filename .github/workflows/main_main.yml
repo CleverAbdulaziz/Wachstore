@@ -54,9 +54,17 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_CF0806A8C0564561995FEF76BDFCC5BD }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FF3527CC09444453A56BBB68658636CF }}
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'main'
-          slot-name: 'production'
-          package: java-app/*.war
+      - - name: Upload JAR artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: java-app
+    path: target/*.jar
+
+- name: Deploy to Azure Web App
+  uses: azure/webapps-deploy@v3
+  with:
+    app-name: 'main'
+    slot-name: 'production'
+    package: '*.jar'
+
+
