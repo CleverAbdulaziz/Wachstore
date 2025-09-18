@@ -49,7 +49,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          subscription-id: ${{ secrets.5ebb78c0-a3c8-4389-9bdf-1e9c2b546a7f }}
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
@@ -57,3 +57,4 @@ jobs:
           app-name: 'main'     # 👈 Your App Service name
           slot-name: 'production'
           package: '*.jar'     # 👈 change to war if needed
+
